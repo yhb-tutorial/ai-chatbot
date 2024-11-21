@@ -7,19 +7,19 @@ import {
 } from 'ai';
 import { z } from 'zod';
 
-import { auth } from '@/app/(auth)/auth';
+// import { auth } from '@/app/(auth)/auth';
 import { customModel } from '@/lib/ai';
 import { models } from '@/lib/ai/models';
 import { systemPrompt } from '@/lib/ai/prompts';
-import {
-  deleteChatById,
-  getChatById,
-  getDocumentById,
-  saveChat,
-  saveDocument,
-  saveMessages,
-  saveSuggestions,
-} from '@/lib/db/queries';
+// import {
+//   deleteChatById,
+//   getChatById,
+//   getDocumentById,
+//   saveChat,
+//   saveDocument,
+//   saveMessages,
+//   saveSuggestions,
+// } from '@/lib/db/queries';
 import type { Suggestion } from '@/lib/db/schema';
 import {
   generateUUID,
@@ -74,18 +74,18 @@ export async function POST(request: Request) {
     return new Response('No user message found', { status: 400 });
   }
 
-  const chat = await getChatById({ id });
+  // const chat = await getChatById({ id });
 
-  if (!chat) {
-    const title = await generateTitleFromUserMessage({ message: userMessage });
-    await saveChat({ id, userId: session.user.id, title });
-  }
+  // if (!chat) {
+  //   const title = await generateTitleFromUserMessage({ message: userMessage });
+  //   await saveChat({ id, userId: session.user.id, title });
+  // }
 
-  await saveMessages({
-    messages: [
-      { ...userMessage, id: generateUUID(), createdAt: new Date(), chatId: id },
-    ],
-  });
+  // await saveMessages({
+  //   messages: [
+  //     { ...userMessage, id: generateUUID(), createdAt: new Date(), chatId: id },
+  //   ],
+  // });
 
   const streamingData = new StreamData();
 
@@ -158,14 +158,14 @@ export async function POST(request: Request) {
 
           streamingData.append({ type: 'finish', content: '' });
 
-          if (session.user?.id) {
-            await saveDocument({
-              id,
-              title,
-              content: draftText,
-              userId: session.user.id,
-            });
-          }
+          // if (session.user?.id) {
+          //   await saveDocument({
+          //     id,
+          //     title,
+          //     content: draftText,
+          //     userId: session.user.id,
+          //   });
+          // }
 
           return {
             id,
@@ -236,14 +236,14 @@ export async function POST(request: Request) {
 
           streamingData.append({ type: 'finish', content: '' });
 
-          if (session.user?.id) {
-            await saveDocument({
-              id,
-              title: document.title,
-              content: draftText,
-              userId: session.user.id,
-            });
-          }
+          // if (session.user?.id) {
+          //   await saveDocument({
+          //     id,
+          //     title: document.title,
+          //     content: draftText,
+          //     userId: session.user.id,
+          //   });
+          // }
 
           return {
             id,
@@ -308,14 +308,14 @@ export async function POST(request: Request) {
           if (session.user?.id) {
             const userId = session.user.id;
 
-            await saveSuggestions({
-              suggestions: suggestions.map((suggestion) => ({
-                ...suggestion,
-                userId,
-                createdAt: new Date(),
-                documentCreatedAt: document.createdAt,
-              })),
-            });
+            // await saveSuggestions({
+            //   suggestions: suggestions.map((suggestion) => ({
+            //     ...suggestion,
+            //     userId,
+            //     createdAt: new Date(),
+            //     documentCreatedAt: document.createdAt,
+            //   })),
+            // });
           }
 
           return {
@@ -332,27 +332,27 @@ export async function POST(request: Request) {
           const responseMessagesWithoutIncompleteToolCalls =
             sanitizeResponseMessages(responseMessages);
 
-          await saveMessages({
-            messages: responseMessagesWithoutIncompleteToolCalls.map(
-              (message) => {
-                const messageId = generateUUID();
+          // await saveMessages({
+          //   messages: responseMessagesWithoutIncompleteToolCalls.map(
+          //     (message) => {
+          //       const messageId = generateUUID();
 
-                if (message.role === 'assistant') {
-                  streamingData.appendMessageAnnotation({
-                    messageIdFromServer: messageId,
-                  });
-                }
+          //       if (message.role === 'assistant') {
+          //         streamingData.appendMessageAnnotation({
+          //           messageIdFromServer: messageId,
+          //         });
+          //       }
 
-                return {
-                  id: messageId,
-                  chatId: id,
-                  role: message.role,
-                  content: message.content,
-                  createdAt: new Date(),
-                };
-              },
-            ),
-          });
+          //       return {
+          //         id: messageId,
+          //         chatId: id,
+          //         role: message.role,
+          //         content: message.content,
+          //         createdAt: new Date(),
+          //       };
+          //     },
+          //   ),
+          // });
         } catch (error) {
           console.error('Failed to save chat');
         }
@@ -375,24 +375,24 @@ export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
 
-  if (!id) {
-    return new Response('Not Found', { status: 404 });
-  }
+  // if (!id) {
+  //   return new Response('Not Found', { status: 404 });
+  // }
 
-  const session = await auth();
+  // const session = await auth();
 
-  if (!session || !session.user) {
-    return new Response('Unauthorized', { status: 401 });
-  }
+  // if (!session || !session.user) {
+  //   return new Response('Unauthorized', { status: 401 });
+  // }
 
   try {
-    const chat = await getChatById({ id });
+    // const chat = await getChatById({ id });
 
-    if (chat.userId !== session.user.id) {
-      return new Response('Unauthorized', { status: 401 });
-    }
+    // if (chat.userId !== session.user.id) {
+    //   return new Response('Unauthorized', { status: 401 });
+    // }
 
-    await deleteChatById({ id });
+    // await deleteChatById({ id });
 
     return new Response('Chat deleted', { status: 200 });
   } catch (error) {
