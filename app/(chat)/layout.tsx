@@ -7,21 +7,14 @@ import { auth } from "../(auth)/auth";
 
 export const experimental_ppr = true;
 
-// export interface User {
-//   id?: string
-//   name?: string | null
-//   email?: string | null
-//   image?: string | null
-// }
-
 export default async function Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   // const [session, cookieStore] = await Promise.all([auth(), cookies()]);
-  // const isCollapsed = cookieStore.get('sidebar:state')?.value !== 'true';
-  const isCollapsed = false;
+  const cookieStore = await cookies();
+  const isCollapsed = cookieStore.get("sidebar:state")?.value !== "true";
   const user = {
     id: "1",
     name: "John Doe",
