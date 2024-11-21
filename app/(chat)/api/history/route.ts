@@ -102,6 +102,5 @@ export async function GET() {
       userId: '5a0e5e35-d08c-45fa-9bb9-04a61b2fc306'
     }
   ];
-  console.log(chats);
   return Response.json(chats);
 }
